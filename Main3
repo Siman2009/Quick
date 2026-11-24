@@ -1,0 +1,47 @@
+import discord
+from discord.ext import commands
+import requests
+import pyttsx3
+
+intents = discord.Intents.default()
+intents.message_content = True
+
+engine = pyttsx3.init()
+engine.setProperty('rate', 130)
+engine.setProperty('volume', 1)
+
+engine.say("Hello! This is a test.")
+engine.runAndWait()
+
+voices = engine.getProperty('voices')
+engine.setProperty('voice', voices[1].id)
+
+def facts():
+    base_url = "https://uselessfacts.jsph.pl/api/v2/facts/random?language=en"
+    response = requests.get(base_url)
+    if response.status_code == 200:
+        fato = response.json()
+        return fato.get("text")
+    else:
+        print(response.status_code)
+        return "Não deu pra contar o fato aleatório"
+
+def speak(text:str):
+    engine.say(text)
+    engine.runAndWait()
+
+bot = commands.Bot(command_prefix='$', intents=intents)
+
+@bot.event
+async def on_ready():
+    print(f'We have logged in as {bot.user}')
+
+
+@bot.command()
+async def Fact(ctx):
+    random_fact=facts()
+    await ctx.send(random_fact)
+    speak(random_fact)
+
+
+bot.run('Insert Here')
