@@ -1,0 +1,39 @@
+import discord
+from discord.ext import commands
+import random
+
+intents = discord.Intents.default()
+intents.message_content = True
+
+bot = commands.Bot(command_prefix='$', intents=intents)
+
+
+elements = "+-/*!&$#?=@<>qwertyuiopasdfghjklçzxcvbnm"
+password = ""
+pass_length = int(input("Enter pass length: "))
+
+for i in range(pass_length):
+    password += random.choice(elements)
+
+
+@bot.event
+async def on_ready():
+    print(f'We have logged in as {bot.user}')
+
+
+@bot.command()
+async def password(ctx, tamanho: int = 12):
+    if tamanho < 1 or tamanho > 128:
+        await ctx.send("Escolha um tamanho entre 1 e 128.")
+        return
+
+    elementos = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+-/*!&$#?=@<>"
+
+    senha = "".join(random.choice(elementos) for i in range(tamanho))
+
+    await ctx.send(f"Sua senha aleatória é: `{senha}`")
+
+
+
+
+bot.run('insert here')
